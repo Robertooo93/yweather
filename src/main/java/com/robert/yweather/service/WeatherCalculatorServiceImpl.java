@@ -24,8 +24,8 @@ public class WeatherCalculatorServiceImpl implements WeatherCalculatorService {
             avgWind += yonderForecastforecast.getWind();
         }
 
-        avgTemp /= yonderWeather.getForecast().size();
-        avgWind /= yonderWeather.getForecast().size();
+        avgTemp /= yonderWeather.getForecast().size()+1;
+        avgWind /= yonderWeather.getForecast().size()+1;
 
         return Weather.builder()
                 .name(cityName)

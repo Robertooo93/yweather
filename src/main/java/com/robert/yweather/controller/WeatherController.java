@@ -1,6 +1,7 @@
 package com.robert.yweather.controller;
 
 import com.robert.yweather.model.Weather;
+import com.robert.yweather.service.FileService;
 import com.robert.yweather.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +19,15 @@ public class WeatherController {
 
     private final WeatherService weatherService;
 
+    private final FileService fileService;
+
     @GetMapping
     public Flux<Weather> getWeather(@RequestParam("city") List<String> cities) {
-        return weatherService.calculateWeather(cities)
-                .doOnNext(System.out::println);
+        Flux<Weather> weatherFlux = weatherService.calculateWeather(cities);
+
+        fileService.writeToFile(weatherFlux.cache());
+
+        return weatherFlux;
     }
 
 }
