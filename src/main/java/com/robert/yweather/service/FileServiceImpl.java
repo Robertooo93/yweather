@@ -4,6 +4,7 @@ import com.robert.yweather.model.Weather;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -20,6 +21,7 @@ public class FileServiceImpl implements FileService {
 
             // Write data to the CSV file
             weatherFlux
+                    .publishOn(Schedulers.boundedElastic())
                     .doOnNext(weather -> {
                         try {
                             bufferedWriter.write(String.format("%s,%s,%s\n", weather.getName(), weather.getTemperature(), weather.getWind()));
