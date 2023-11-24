@@ -4,6 +4,7 @@ import com.robert.yweather.model.Weather;
 import com.robert.yweather.service.FileService;
 import com.robert.yweather.service.WeatherService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +22,7 @@ public class WeatherController {
 
     private final FileService fileService;
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<Weather> getWeather(@RequestParam("city") List<String> cities) {
         Flux<Weather> weatherFlux = weatherService.calculateWeather(cities);
 
