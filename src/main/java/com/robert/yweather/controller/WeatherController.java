@@ -26,7 +26,7 @@ public class WeatherController {
     public Flux<Weather> getWeather(@RequestParam("city") List<String> cities) {
         Flux<Weather> weatherFlux = weatherService.calculateWeather(cities);
 
-        fileService.writeToFile(weatherFlux.cache());
+        fileService.writeToFile(weatherFlux);
 
         return weatherFlux;
     }
