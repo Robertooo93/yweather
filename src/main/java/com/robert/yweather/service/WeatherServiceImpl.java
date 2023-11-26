@@ -6,7 +6,7 @@ import com.robert.yweather.property.SupportedCities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.util.function.Tuple2;
+import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
 import java.util.Comparator;
@@ -26,11 +26,16 @@ public class WeatherServiceImpl implements WeatherService {
 
     public Flux<Weather> calculateWeather(List<String> cities) {
         Set<String> supportedCities = filterCities(cities);
-        return Flux.fromIterable(supportedCities)
-                .flatMap(path -> yonderWeatherService.getByCityName(path)
-                        .map(result -> Tuples.of(path, result)))
-                .sort(Comparator.comparing(Tuple2::getT1))
-                .map(tuple -> weatherCalculatorService.calculateWeather(tuple.getT2(), tuple.getT1()));
+        Flux<Weather> weatherFluxResult = Flux.empty();
+        for (String city : supportedCities) {
+            Mono<Weather> weatherMonoResult = yonderWeatherService.getByCityName(city)
+                    .map(result -> Tuples.of(city, result))
+                    .map(tuple -> weatherCalculatorService.calculateWeather(tuple.getT2(), tuple.getT1())).log();
+            weatherFluxResult = Flux.concat(weatherFluxResult, weatherMonoResult);
+        }
+
+        return weatherFluxResult
+                .sort(Comparator.comparing(Weather::getName));
     }
 
     private Set<String> filterCities(List<String> cities) {

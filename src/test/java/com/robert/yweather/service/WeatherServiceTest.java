@@ -18,7 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WeatherServiceTest {
@@ -57,5 +58,7 @@ class WeatherServiceTest {
         StepVerifier.create(resultFlux)
                 .expectNextCount(2) // Assuming City3 is not supported, we expect two valid results
                 .verifyComplete();
+
+        verify(yonderWeatherService, times(2)).getByCityName(anyString());
     }
 }
