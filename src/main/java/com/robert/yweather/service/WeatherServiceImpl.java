@@ -30,7 +30,7 @@ public class WeatherServiceImpl implements WeatherService {
         for (String city : supportedCities) {
             Mono<Weather> weatherMonoResult = yonderWeatherService.getByCityName(city)
                     .map(result -> Tuples.of(city, result))
-                    .map(tuple -> weatherCalculatorService.calculateWeather(tuple.getT2(), tuple.getT1())).log();
+                    .map(tuple -> weatherCalculatorService.calculateWeather(tuple.getT2(), tuple.getT1()));
             weatherFluxResult = Flux.concat(weatherFluxResult, weatherMonoResult);
         }
 
